@@ -1,5 +1,13 @@
 **I WILL NOT BE HELD RESPONSIBLE IF YOU BRICK YOUR PRINTER - CREATING AND INSTALLING CUSTOM FIRMWARE IS RISKY**
 
+## Preface
+
+This script is an adaptation from the original K1 firmware script by pellcorp
+https://github.com/pellcorp/creality/tree/main/firmware
+
+I changed some stuff for the Nebula pad and added a script in root to install the creality helper script
+Also changed the shadow file with root password set to 'creality'
+
 ## Prerequisites
 
 You will need a linux machine with the following commands available, something like ubuntu or arch is fine:
