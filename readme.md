@@ -47,6 +47,10 @@ a new firmware image from the cli rather than relying on the display server
 /etc/ota_bin/local_ota_update.sh /tmp/udisk/sda1/NEBULA_ota_img_V6.1.1.0.27.img
 ```
 
+## Pre Rooted file
+I've uploaded a pre rooted .img for you to try here:
+https://mega.nz/file/8AcXjQLI#ypxpdgXPjwcAG4R6vlcldCK_UPA_MVohBCnmU90gREQ
+
 ## Thanks
 
 Thanks for pellcorp and destinal from discord for providing information about testing the image and also for providing 
