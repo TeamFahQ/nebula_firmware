@@ -50,6 +50,7 @@ a new firmware image from the cli rather than relying on the display server
 ## Pre Rooted file
 I've uploaded a pre rooted .img for you to try here:
 https://mega.nz/file/8AcXjQLI#ypxpdgXPjwcAG4R6vlcldCK_UPA_MVohBCnmU90gREQ
+The root password is 'creality'
 
 ## Thanks
 
