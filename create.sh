@@ -6,6 +6,7 @@
 # Also changed the shadow file with root password set to 'creality'
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd -P)"
+source pass
 
 # if you look hard enough you can find the password on the interwebs in a certain discord
 if [ -z "$NEBULA_FIRMWARE_PASSWORD" ]; then
