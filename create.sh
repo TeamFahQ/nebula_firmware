@@ -27,22 +27,22 @@ old_version=1.1.0.27
 version="6.${old_version}"
 
 function write_ota_info() {
-    echo "ota_version=${version}" > /tmp/${version}-koen01/ota_info
-    echo "ota_board_name=${board_name}" >> /tmp/${version}-koen01/ota_info
-    echo "ota_compile_time=$(date '+%Y %m.%d %H:%M:%S')" >> /tmp/${version}-koen01/ota_info
-    echo "ota_site=http://192.168.43.52/ota/board_test" >> /tmp/${version}-koen01/ota_info
-    sudo cp /tmp/${version}-koen01/ota_info /tmp/${version}-koen01/squashfs-root/etc/
+    echo "ota_version=${version}" > $CURRENT_DIR/tmp/${version}-koen01/ota_info
+    echo "ota_board_name=${board_name}" >> $CURRENT_DIR/tmp/${version}-koen01/ota_info
+    echo "ota_compile_time=$(date '+%Y %m.%d %H:%M:%S')" >> $CURRENT_DIR/tmp/${version}-koen01/ota_info
+    echo "ota_site=http://192.168.43.52/ota/board_test" >> $CURRENT_DIR/tmp/${version}-koen01/ota_info
+    sudo cp $CURRENT_DIR/tmp/${version}-koen01/ota_info $CURRENT_DIR/tmp/${version}-koen01/squashfs-root/etc/
 }
 
 function customise_rootfs() {
     write_ota_info
-    sudo cp $CURRENT_DIR/etc/init.d/* /tmp/${version}-koen01/squashfs-root/etc/init.d/
-    sudo sed -i "/^root/c\\$(printf '%s\n' "$root_hash")"  /tmp/${version}-koen01/squashfs-root/etc/shadow
-    sudo cp $CURRENT_DIR/root/* /tmp/${version}-koen01/squashfs-root/root/
+    sudo cp $CURRENT_DIR/etc/init.d/* $CURRENT_DIR/tmp/${version}-koen01/squashfs-root/etc/init.d/
+    sudo sed -i "/^root/c\\$(printf '%s\n' "$root_hash")"  $CURRENT_DIR/tmp/${version}-koen01/squashfs-root/etc/shadow
+    sudo cp $CURRENT_DIR/root/* $CURRENT_DIR/tmp/${version}-koen01/squashfs-root/root/
 }
 
 function update_rootfs() {
-    pushd /tmp/${version}-koen01/ > /dev/null
+    pushd $CURRENT_DIR/tmp/${version}-koen01/ > /dev/null
     sudo unsquashfs orig_rootfs.squashfs 
     customise_rootfs
     sudo mksquashfs squashfs-root rootfs.squashfs || exit $?
@@ -60,63 +60,64 @@ sub_directory="ota_v${version}"
 image_name="${board_name}_ota_img_V${version}".img
 root_hash='root:$1$C91t0g0z$MH9VBdqKSXjvrKNEw7wqG/:19562::::::'
 
-if [ ! -f /tmp/$old_image_name ]; then
-    echo "Downloading $download -> /tmp/$old_image_name ..."
-    wget "$download" -O /tmp/$old_image_name
+if [ ! -f $CURRENT_DIR/tmp/$old_image_name ]; then
+    echo "Downloading $download -> $CURRENT_DIR/tmp/$old_image_name ..."
+    wget "$download" -O $CURRENT_DIR/tmp/$old_image_name
 fi
 
-if [ -d /tmp/$old_directory ]; then
-    rm -rf /tmp/$old_directory
+if [ -d $CURRENT_DIR/tmp/$old_directory ]; then
+    rm -rf $CURRENT_DIR/tmp/$old_directory
 fi
 
-7z x /tmp/$old_image_name -p"$NEBULA_FIRMWARE_PASSWORD" -o/tmp
+7z x $CURRENT_DIR/tmp/$old_image_name -p"$NEBULA_FIRMWARE_PASSWORD" -o$CURRENT_DIR/tmp
 
-if [ -d /tmp/${version}-koen01 ]; then
-    sudo rm -rf /tmp/${version}-koen01
+if [ -d $CURRENT_DIR/tmp/${version}-koen01 ]; then
+    sudo rm -rf $CURRENT_DIR/tmp/${version}-koen01
 fi
-mkdir -p /tmp/${version}-koen01/$directory/$sub_directory
+mkdir -p $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory
 
-cat /tmp/$old_directory/$old_sub_directory/rootfs.squashfs.* > /tmp/${version}-koen01/orig_rootfs.squashfs
-orig_rootfs_md5=$(md5sum /tmp/${version}-koen01/orig_rootfs.squashfs | awk '{print $1}')
-orig_rootfs_size=$(stat -c%s /tmp/${version}-koen01/orig_rootfs.squashfs)
+cat $CURRENT_DIR/tmp/$old_directory/$old_sub_directory/rootfs.squashfs.* > $CURRENT_DIR/tmp/${version}-koen01/orig_rootfs.squashfs
+orig_rootfs_md5=$(md5sum $CURRENT_DIR/tmp/${version}-koen01/orig_rootfs.squashfs | awk '{print $1}')
+orig_rootfs_size=$(stat -c%s $CURRENT_DIR/tmp/${version}-koen01/orig_rootfs.squashfs)
 
 # do the changes here
 update_rootfs || exit $?
 
-rootfs_md5=$(md5sum /tmp/${version}-koen01/rootfs.squashfs | awk '{print $1}')
-rootfs_size=$(stat -c%s  /tmp/${version}-koen01/rootfs.squashfs)
+rootfs_md5=$(md5sum $CURRENT_DIR/tmp/${version}-koen01/rootfs.squashfs | awk '{print $1}')
+rootfs_size=$(stat -c%s  $CURRENT_DIR/tmp/${version}-koen01/rootfs.squashfs)
 
-echo "current_version=$version" > /tmp/${version}-koen01/$directory/ota_config.in
-echo "" > /tmp/${version}-koen01/$directory/$sub_directory/ota_v${version}.ok
+echo "current_version=$version" > $CURRENT_DIR/tmp/${version}-koen01/$directory/ota_config.in
+echo "" > $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/ota_v${version}.ok
 
-cp /tmp/$old_directory/$old_sub_directory/ota_update.in /tmp/${version}-koen01/$directory/$sub_directory/
-cp /tmp/$old_directory/$old_sub_directory/ota_md5_xImage* /tmp/${version}-koen01/$directory/$sub_directory/
-cp /tmp/$old_directory/$old_sub_directory/ota_md5_zero.bin* /tmp/${version}-koen01/$directory/$sub_directory/
-cp /tmp/$old_directory/$old_sub_directory/zero.bin.* /tmp/${version}-koen01/$directory/$sub_directory/
-cp /tmp/$old_directory/$old_sub_directory/xImage.* /tmp/${version}-koen01/$directory/$sub_directory/
+cp $CURRENT_DIR/tmp/$old_directory/$old_sub_directory/ota_update.in $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/
+cp $CURRENT_DIR/tmp/$old_directory/$old_sub_directory/ota_md5_xImage* $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/
+cp $CURRENT_DIR/tmp/$old_directory/$old_sub_directory/ota_md5_zero.bin* $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/
+cp $CURRENT_DIR/tmp/$old_directory/$old_sub_directory/zero.bin.* $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/
+cp $CURRENT_DIR/tmp/$old_directory/$old_sub_directory/xImage.* $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/
 
-pushd /tmp/${version}-koen01/$directory/$sub_directory > /dev/null
-split -d -b 1048576 -a 4 /tmp/${version}-koen01/rootfs.squashfs rootfs.squashfs.
+pushd $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory > /dev/null
+split -d -b 1048576 -a 4 $CURRENT_DIR/tmp/${version}-koen01/rootfs.squashfs rootfs.squashfs.
 popd > /dev/null
 
 part_md5=
-for i in $(ls /tmp/${version}-koen01/$directory/$sub_directory/rootfs.squashfs.*); do
+for i in $(ls $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/rootfs.squashfs.*); do
     file=$(basename $i)
     if [ -z "$part_md5" ]; then
         id=$rootfs_md5
     else
         id=$part_md5
     fi
-    mv "/tmp/${version}-koen01/$directory/$sub_directory/$file" "/tmp/${version}-koen01/$directory/$sub_directory/${file}.${id}"
-    part_md5=$(md5sum /tmp/${version}-koen01/$directory/$sub_directory/${file}.${id} | awk '{print $1}')
-    echo "$part_md5" >> "/tmp/${version}-koen01/$directory/$sub_directory/ota_md5_rootfs.squashfs.${rootfs_md5}"
+    mv "$CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/$file" "$CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/${file}.${id}"
+    part_md5=$(md5sum $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/${file}.${id} | awk '{print $1}')
+    echo "$part_md5" >> "$CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/ota_md5_rootfs.squashfs.${rootfs_md5}"
 done
 
-sed -i "s/ota_version=$old_version/ota_version=$version/g" /tmp/${version}-koen01/$directory/$sub_directory/ota_update.in
-sed -i "s/img_md5=$orig_rootfs_md5/img_md5=$rootfs_md5/g" /tmp/${version}-koen01/$directory/$sub_directory/ota_update.in
-sed -i "s/img_size=$orig_rootfs_size/img_size=$rootfs_size/g" /tmp/${version}-koen01/$directory/$sub_directory/ota_update.in
+sed -i "s/ota_version=$old_version/ota_version=$version/g" $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/ota_update.in
+sed -i "s/img_md5=$orig_rootfs_md5/img_md5=$rootfs_md5/g" $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/ota_update.in
+sed -i "s/img_size=$orig_rootfs_size/img_size=$rootfs_size/g" $CURRENT_DIR/tmp/${version}-koen01/$directory/$sub_directory/ota_update.in
 
-pushd /tmp/${version}-koen01/ > /dev/null
+pushd $CURRENT_DIR/tmp/${version}-koen01/ > /dev/null
 7z a ${image_name}.7z -p"$NEBULA_FIRMWARE_PASSWORD" $directory
 mv ${image_name}.7z ${image_name}
+mv $CURRENT_DIR/tmp/${version}-koen01/${image_name} $CURRENT_DIR
 popd > /dev/null
