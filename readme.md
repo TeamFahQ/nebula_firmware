@@ -36,7 +36,7 @@ export NEBULA_FIRMWARE_PASSWORD='the password from a certain discord'
 
 **NOTE:** You will be required to enter your `sudo` password
 
-The resulting img file will be located at `/tmp/1.1.0.27-koen01/NEBULA_ota_img_V6.1.1.0.27.img`
+The resulting img file will be located at `<base of repo dir>/NEBULA_ota_img_V6.1.1.0.27.img`
 
 ## Testing
 
